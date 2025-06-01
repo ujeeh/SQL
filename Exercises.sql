@@ -65,3 +65,43 @@ select avg(unit_price) avg_unit_price from Products;
 
 -- calculate the total quantity sold from the sales table
 select sum(quantity_sold) total_quantity_sold from Sales;
+
+-- count sales per day from the sales table
+select sale_date, count(*) from Sales
+group by sale_date
+order by sale_date asc;
+
+-- retrieve product name aand unit price from the product with the highest unit price
+select product_name, unit_price from Products
+order by unit_price desc
+limit 1;
+
+-- retrieve the sale id, product id and total price for sales with quantity sold greater than 4
+select sale_id, product_id, total_price from Sales
+where quantity_sold > 4;
+
+-- retrieve the product name and unit price from the products table ordering the results by unit price in descending order
+select product_name, unit_price from Products
+order by unit_price desc;
+
+-- retrieve the total price of all sales, rounding the values to two decimal places
+select round(sum(total_price), 2) total_sales from Sales;
+
+-- calculate the average total_price of sales in Sales table
+select avg(total_price) average_total_price from Sales;
+
+-- retrieve the sale id and date formatting the sales date as YYYY-MM-DD
+select sale_id, date_format(sale_date, '%Y-%d-%m') formatted_date from sales;
+
+-- calculate the total revenue generated from sale of electronic products
+select sum(sales.total_price) total_revenue from sales
+join products on sales.product_id = products.product_id
+where products.category = 'Electronics';
+
+-- retrieve the product name and unit price from the products table filtering the unit price to show only values betwee 20 and 600
+select products.product_name, products.unit_price from products
+where unit_price between 20 and 600;
+
+-- retrieve the product name and category from products table, in ascending order of category
+select products.product_name, products.category from products
+order by category asc;
