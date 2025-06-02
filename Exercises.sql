@@ -163,3 +163,29 @@ group by product_name;
 select products.product_name, sum(sales.total_price) total_revenue from products
 join sales on sales.product_id = products.product_id
 group by product_name;
+
+-- list all sales with corresponding product name
+select sales.sale_id, products.product_name from sales
+join products on products.product_id = sales.product_id;
+
+-- retrieve the product name and total revenue for each product
+select products.product_name, sum(sales.total_price) total_revenue from products
+join sales on sales.product_id = products.product_id
+group by product_name
+order by total_revenue desc;
+
+-- retrieve product name, total revenue and percentage of total revenue for each product
+select products.product_name, sum(sales.total_price) total_revenue, 
+round(
+(sum(sales.total_price)* 100) / (select sum(total_price) from sales),
+2) percentage_of_sales_revenue from products
+join sales on sales.product_id = products.product_id
+group by product_name
+order by percentage_of_sales_revenue desc;
+
+-- rank products based on total sales revenue
+select products.product_name, sum(sales.total_price) total_revenue, 
+rank () over (order by sum(sales.total_price) desc) revenue_rank from products
+join sales on sales.product_id = products.product_id
+group by product_name;
+
