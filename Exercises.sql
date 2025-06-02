@@ -105,3 +105,61 @@ where unit_price between 20 and 600;
 -- retrieve the product name and category from products table, in ascending order of category
 select products.product_name, products.category from products
 order by category asc;
+
+-- Intermediate level Exercises
+-- calculate total quantity sold of electronic products
+select sum(sales.quantity_sold) total_quantity_sold from sales
+join products on sales.product_id = products.product_id
+where products.category = 'Electronics';
+
+-- retreive the product name and total price, calculating total price as quantity sold multiplied by unit price
+select products.product_name, sales.quantity_sold * products.unit_price as total_price from sales
+join products on sales.product_id = products.product_id;
+
+-- identify the most frequently sold product from sales table
+select products.product_name, count(*) sales_count from sales
+join products on sales.product_id = products.product_id
+group by product_name
+order by sales_count desc
+limit 1;
+
+-- find products not sold from products table
+select * from products
+where product_id not in (select distinct product_id from sales);
+
+-- calculate the total revenue generated from sales for each category
+select products.category, sum(sales.total_price) total_revenue from products
+join sales on sales.product_id = products.product_id
+group by category;
+
+-- find the product category with the highest average unit price
+select category from products
+group by category
+order by avg(unit_price) desc
+limit 1;
+
+-- identify products with total sales exceeding 30
+select products.product_name from products
+join sales on sales.product_id = products.product_id
+group by product_name
+having sum(total_price) > 30;
+
+-- count the number of sales made each month
+select date_format(sales.sale_date, '%y-%m') as month, count(*) sales_count from sales
+group by month;
+
+-- retrieve sales details for products having smart in their name
+select sales.sale_id, products.product_name, sales.total_price from sales
+join products on sales.product_id = products.product_id
+where product_name like '%smart%';
+
+-- determine the average quanity sold for products with unit price greater than 100
+select products.product_name, avg(sales.quantity_sold) average_quantity_sold from products
+join sales on sales.product_id = products.product_id
+where products.unit_price > 100
+group by product_name;
+
+-- retrieve the product name and total sales revenue for each product
+select products.product_name, sum(sales.total_price) total_revenue from products
+join sales on sales.product_id = products.product_id
+group by product_name;
