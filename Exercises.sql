@@ -189,3 +189,37 @@ rank () over (order by sum(sales.total_price) desc) revenue_rank from products
 join sales on sales.product_id = products.product_id
 group by product_name;
 
+-- calculate the running total revenue for each product category
+select products.category, products.product_name, sales.sale_date, 
+sum(sales.total_price) over (partition by products.category order by sales.sale_date) running_total_revenue
+from products
+join sales on sales.product_id = products.product_id;
+
+-- categorize sales as high, medium or low based on total price
+select sales.sale_id,
+case
+	when total_price > 200 then 'High'
+    when total_price between 100 and 200 then 'Medium'
+    else 'Low'
+    end as sales_category
+from sales;
+
+-- identify sales where the quantity sold is greater than the average quantity sold
+select * from sales
+where quantity_sold > (select avg(quantity_sold) from sales);
+
+-- extract the month and year from the sale date and count the number of sales for each month
+select concat(year(sale_date), '-', lpad(month(sale_date), 2, '0')) as month, count(*) sales_count 
+from sales
+group by month;
+
+-- calculate the number of days between the current date and sale date for each sale
+select sales.sale_id, datediff(now(), sale_date) days_since_sale from sales;
+
+-- identify sales made during weekdays versus weekends
+select sales.sale_id,
+case
+	when dayofweek(sale_date) in (1, 7) then 'Weekend'
+    else 'Weekday'
+    end as day_type
+from sales;
